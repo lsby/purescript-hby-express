@@ -20,7 +20,7 @@ foreign import data Route :: Type
 foreign import data RouteBuilder :: Type
 
 ----------------------
-type Path
+type UrlPath
   = String
 
 ----------------------
@@ -36,13 +36,19 @@ foreign import useMiddle :: Middle -> AppBuilder -> AppBuilder
 ----------------------
 foreign import route :: RouteBuilder
 
-foreign import setGet :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+foreign import setGet :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
 
-foreign import setPost :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+foreign import setPost :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
 
 foreign import mkRoute :: RouteBuilder -> Task Route
 
-foreign import useRoute :: Path -> Route -> AppBuilder -> AppBuilder
+foreign import useRoute :: UrlPath -> Route -> AppBuilder -> AppBuilder
+
+----------------------
+type DirPath
+  = String
+
+foreign import useStatic :: UrlPath -> DirPath -> AppBuilder -> AppBuilder
 
 ----------------------
 foreign import getBody :: Req -> Json

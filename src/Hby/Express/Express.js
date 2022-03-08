@@ -2,6 +2,7 @@
 exports.app = {
   middle: [],
   route: [],
+  static: null,
 };
 
 // mkApp :: AppBuilder -> Task App
@@ -11,6 +12,9 @@ exports.mkApp = (builder) => {
     var app = express();
     for (var m of builder.middle) app.use(m);
     for (var r of builder.route) app.use(r.path, r.route);
+    if (builder.static != null) {
+      app.use(builder.path, express.static(builder.dirPath));
+    }
     res(app);
   });
 };
@@ -31,13 +35,13 @@ exports.useMiddle = (m) => (b) => {
 // route :: RouteBuilder
 exports.route = [];
 
-// setGet :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+// setGet :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
 exports.setGet = (b) => (p) => (f) => {
   var R = require("ramda");
   return R.union(b, [{ type: "get", path: p, fun: f }]);
 };
 
-// setPost :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+// setPost :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
 exports.setPost = (b) => (p) => (f) => {
   var R = require("ramda");
   return R.union(b, [{ type: "post", path: p, fun: f }]);
@@ -58,11 +62,23 @@ exports.mkRoute = (b) => () => {
   });
 };
 
-// useRoute :: Path -> Route -> AppBuilder -> AppBuilder
+// useRoute :: UrlPath -> Route -> AppBuilder -> AppBuilder
 exports.useRoute = (p) => (r) => (b) => {
   var R = require("ramda");
   return R.mergeDeepRight(b, {
     route: R.union(b.route, [{ path: p, route: r }]),
+  });
+};
+
+// ----------------------
+// useStatic :: UrlPath -> DirPath -> AppBuilder -> AppBuilder
+exports.useStatic = (p) => (d) => (b) => {
+  var R = require("ramda");
+  return R.mergeDeepRight(b, {
+    static: {
+      path: p,
+      dirPath: d,
+    },
   });
 };
 
