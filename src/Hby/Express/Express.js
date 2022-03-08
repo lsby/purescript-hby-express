@@ -21,8 +21,8 @@ exports.mkMiddle = (f) => {
   return f;
 };
 
-// useMiddle :: AppBuilder -> Middle -> AppBuilder
-exports.useMiddle = (b) => (m) => {
+// useMiddle :: Middle -> AppBuilder -> AppBuilder
+exports.useMiddle = (m) => (b) => {
   var R = require("ramda");
   return R.mergeDeepRight(b, { middle: R.union(b.middle, [m]) });
 };
@@ -58,8 +58,8 @@ exports.mkRoute = (b) => () => {
   });
 };
 
-// useRoute :: AppBuilder -> Path -> Route -> AppBuilder
-exports.useRoute = (b) => (p) => (r) => {
+// useRoute :: Path -> Route -> AppBuilder -> AppBuilder
+exports.useRoute = (p) => (r) => (b) => {
   var R = require("ramda");
   return R.mergeDeepRight(b, {
     route: R.union(b.route, [{ path: p, route: r }]),

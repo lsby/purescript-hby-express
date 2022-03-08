@@ -31,7 +31,7 @@ foreign import mkApp :: AppBuilder -> Task App
 ----------------------
 foreign import mkMiddle :: (Req -> Res -> Task Unit) -> Middle
 
-foreign import useMiddle :: AppBuilder -> Middle -> AppBuilder
+foreign import useMiddle :: Middle -> AppBuilder -> AppBuilder
 
 ----------------------
 foreign import route :: RouteBuilder
@@ -42,7 +42,7 @@ foreign import setPost :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> R
 
 foreign import mkRoute :: RouteBuilder -> Task Route
 
-foreign import useRoute :: AppBuilder -> Path -> Route -> AppBuilder
+foreign import useRoute :: Path -> Route -> AppBuilder -> AppBuilder
 
 ----------------------
 foreign import getBody :: Req -> Json
