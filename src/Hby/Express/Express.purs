@@ -36,9 +36,9 @@ foreign import useMiddle :: Middle -> AppBuilder -> AppBuilder
 ----------------------
 foreign import route :: RouteBuilder
 
-foreign import setGet :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
+foreign import setGet :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder -> RouteBuilder
 
-foreign import setPost :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
+foreign import setPost :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder -> RouteBuilder
 
 foreign import mkRoute :: RouteBuilder -> Task Route
 

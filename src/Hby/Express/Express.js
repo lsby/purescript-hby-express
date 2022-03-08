@@ -35,14 +35,14 @@ exports.useMiddle = (m) => (b) => {
 // route :: RouteBuilder
 exports.route = [];
 
-// setGet :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
-exports.setGet = (b) => (p) => (f) => {
+// setGet :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder ->  RouteBuilder
+exports.setGet = (p) => (f) => (b) => {
   var R = require("ramda");
   return R.union(b, [{ type: "get", path: p, fun: f }]);
 };
 
-// setPost :: RouteBuilder -> UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder
-exports.setPost = (b) => (p) => (f) => {
+// setPost :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder -> RouteBuilder
+exports.setPost = (p) => (f) => (b) => {
   var R = require("ramda");
   return R.union(b, [{ type: "post", path: p, fun: f }]);
 };
