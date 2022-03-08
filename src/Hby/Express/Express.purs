@@ -7,6 +7,8 @@ import Hby.Task (Task)
 ----------------------
 foreign import data App :: Type
 
+foreign import data AppBuilder :: Type
+
 foreign import data Req :: Type
 
 foreign import data Res :: Type
@@ -15,32 +17,32 @@ foreign import data Middle :: Type
 
 foreign import data Route :: Type
 
-----------------------
-type Url
-  = String
+foreign import data RouteBuilder :: Type
 
+----------------------
 type Path
   = String
 
 ----------------------
-foreign import mkApp :: Task App
+foreign import app :: AppBuilder
+
+foreign import mkApp :: AppBuilder -> Task App
 
 ----------------------
 foreign import mkMiddle :: (Req -> Res -> Task Unit) -> Middle
 
-foreign import useMiddle :: App -> Middle -> Task Unit
+foreign import useMiddle :: AppBuilder -> Middle -> AppBuilder
 
 ----------------------
-foreign import mkRoute :: Task Route
+foreign import route :: RouteBuilder
 
-foreign import setGet :: Route -> Url -> (Req -> Res -> Task Unit) -> Task Unit
+foreign import setGet :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
 
-foreign import setPost :: Route -> Url -> (Req -> Res -> Task Unit) -> Task Unit
+foreign import setPost :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
 
-foreign import useRoute :: App -> Url -> Route -> Task Unit
+foreign import mkRoute :: RouteBuilder -> Task Route
 
-----------------------
-foreign import useStatic :: App -> Url -> Path -> Task Unit
+foreign import useRoute :: AppBuilder -> Path -> Route -> AppBuilder
 
 ----------------------
 foreign import getBody :: Req -> Json

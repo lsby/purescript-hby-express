@@ -1,67 +1,72 @@
-// mkApp :: Task App
-exports.mkApp = () => {
+// app :: AppBuilder
+exports.app = {
+  middle: [],
+  route: [],
+};
+
+// mkApp :: AppBuilder -> Task App
+exports.mkApp = (builder) => {
   var express = require("express");
   return new Promise((res, rej) => {
     var app = express();
+    for (var m of builder.middle) app.use(m);
+    for (var r of builder.route) app.use(r.path, r.route);
     res(app);
   });
 };
 
+// ----------------------
 // mkMiddle :: (Req -> Res -> Task Unit) -> Middle
 exports.mkMiddle = (f) => {
   return f;
 };
 
-// useMiddle :: App -> Middle -> Task Unit
-exports.useMiddle = (app) => (m) => () => {
-  return new Promise((res, rej) => {
-    app.use(m);
-    res();
-  });
+// useMiddle :: AppBuilder -> Middle -> AppBuilder
+exports.useMiddle = (b) => (m) => {
+  var R = require("ramda");
+  return R.mergeDeepRight(b, { middle: R.union(b.middle, [m]) });
 };
 
-// mkRoute :: Task Route
-exports.mkRoute = () => {
-  var express = require("express");
+// ----------------------
+// route :: RouteBuilder
+exports.route = [];
+
+// setGet :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+exports.setGet = (b) => (p) => (f) => {
+  var R = require("ramda");
+  return R.union(b, [{ type: "get", path: p, fun: f }]);
+};
+
+// setPost :: RouteBuilder -> Path -> (Req -> Res -> Task Unit) -> RouteBuilder
+exports.setPost = (b) => (p) => (f) => {
+  var R = require("ramda");
+  return R.union(b, [{ type: "post", path: p, fun: f }]);
+};
+
+// mkRoute :: RouteBuilder -> Task Route
+exports.mkRoute = (b) => () => {
   return new Promise((res, rej) => {
     var router = express.Router();
+    for (var r of b) {
+      if (r.type == "get") {
+        router.get(r.path, (req, res) => r.fun(req)(res)());
+      } else if (r.type == "post") {
+        router.post(r.path, (req, res) => r.fun(req)(res)());
+      }
+    }
     res(router);
   });
 };
 
-// setGet :: Route -> Url -> (Req -> Res -> Task Unit) -> Task Unit
-exports.setGet = (route) => (path) => (f) => () => {
-  return new Promise((res, rej) => {
-    route.get(path, (req, res) => f(req)(res)());
-    res();
+// useRoute :: AppBuilder -> Path -> Route -> AppBuilder
+exports.useRoute = (b) => (p) => (r) => {
+  var R = require("ramda");
+  return R.mergeDeepRight(b, {
+    route: R.union(b.route, [{ path: p, route: r }]),
   });
 };
 
-// setPost :: Route -> Url -> (Req -> Res -> Task Unit) -> Task Unit
-exports.setPost = (route) => (path) => (f) => () => {
-  return new Promise((res, rej) => {
-    route.post(path, (req, res) => f(req)(res)());
-    res();
-  });
-};
-
-// useRoute :: App -> Url -> Route -> Task Unit
-exports.useRoute = (app) => (path) => (route) => () => {
-  return new Promise((res, rej) => {
-    app.use(path, route);
-    res();
-  });
-};
-
-// useStatic :: App -> Url -> Path -> Task Unit
-exports.useStatic = (app) => (url) => (path) => () => {
-  var express = require("express");
-  return new Promise((res, rej) => {
-    app.use(url, express.static(path));
-    res();
-  });
-};
-
+// ----------------------
 // getBody :: Req -> Json
 exports.getBody = (req) => {
   return req.body;
@@ -72,6 +77,7 @@ exports.getQuery = (req) => {
   return req.query;
 };
 
+// ----------------------
 // send :: Res -> Json -> Task Unit
 exports.send = (expressRes) => (data) => () => {
   return new Promise((res, rej) => {
@@ -80,6 +86,7 @@ exports.send = (expressRes) => (data) => () => {
   });
 };
 
+// ----------------------
 // listen :: App -> Port -> CallBack -> Task Unit
 exports.listen = (app) => (port) => (cb) => () => {
   return new Promise((res, rej) => {
@@ -88,6 +95,7 @@ exports.listen = (app) => (port) => (cb) => () => {
   });
 };
 
+// ----------------------
 // _middle_json :: Unit -> Middle
 exports._middle_json = () => {
   var express = require("express");
