@@ -1,5 +1,5 @@
-// app :: AppBuilder
-exports.app = {
+// appB :: AppBuilder
+exports.appB = {
   middle: [],
   route: [],
   static: null,
@@ -32,8 +32,8 @@ exports.useMiddle = (m) => (b) => {
 };
 
 // ----------------------
-// route :: RouteBuilder
-exports.route = [];
+// routeB :: RouteBuilder
+exports.routeB = [];
 
 // setGet :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder ->  RouteBuilder
 exports.setGet = (p) => (f) => (b) => {

@@ -24,7 +24,7 @@ type UrlPath
   = String
 
 ----------------------
-foreign import app :: AppBuilder
+foreign import appB :: AppBuilder
 
 foreign import mkApp :: AppBuilder -> Task App
 
@@ -34,7 +34,7 @@ foreign import mkMiddle :: (Req -> Res -> Task Unit) -> Middle
 foreign import useMiddle :: Middle -> AppBuilder -> AppBuilder
 
 ----------------------
-foreign import route :: RouteBuilder
+foreign import routeB :: RouteBuilder
 
 foreign import setGet :: UrlPath -> (Req -> Res -> Task Unit) -> RouteBuilder -> RouteBuilder
 
