@@ -49,6 +49,7 @@ exports.setPost = (p) => (f) => (b) => {
 
 // mkRoute :: RouteBuilder -> Task Route
 exports.mkRoute = (b) => () => {
+  var express = require("express");
   return new Promise((res, rej) => {
     var router = express.Router();
     for (var r of b) {
