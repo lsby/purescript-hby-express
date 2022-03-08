@@ -6,14 +6,14 @@ exports.appB = {
 };
 
 // mkApp :: AppBuilder -> Task App
-exports.mkApp = (builder) => {
+exports.mkApp = (builder) => () => {
   var express = require("express");
   return new Promise((res, rej) => {
     var app = express();
     for (var m of builder.middle) app.use(m);
     for (var r of builder.route) app.use(r.path, r.route);
     if (builder.static != null) {
-      app.use(builder.path, express.static(builder.dirPath));
+      app.use(builder.static.path, express.static(builder.static.dirPath));
     }
     res(app);
   });
